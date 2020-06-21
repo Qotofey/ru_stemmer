@@ -44,26 +44,26 @@ defmodule RuStemmer do
 
   def two_syllable(word) do
     word
-    |> cut_ends
-    |> String.replace(~r/(и)$/u, "")
+    |> cut_ending
+    |> String.replace(~r/и$/u, "")
     |> tree_syllable
     |> String.replace(@superlative_rx, "")
   end
 
-  def cut_ends(word) do
+  def cut_ending(word) do
     perfect_gerund = String.replace(word, @perfect_gerund_rx, "\\4")
-
-    word = String.replace(word, @reflexive_rx, "")
-    adjective = String.replace(word, @adjective_rx, "")
-    verb = String.replace(word, @verb_rx, "\\4")
-    noan = String.replace(word, @noun_rx, "")
+    stem = String.replace(word, @reflexive_rx, "")
+    adjectival = String.replace(stem, @adjective_rx, "")
+    participle = String.replace(adjectival, @participle_rx, "\\4")
+    verb = String.replace(stem, @verb_rx, "\\4")
+    noan = String.replace(stem, @noun_rx, "")
 
     cond do
       word != perfect_gerund -> perfect_gerund
-      word != adjective      -> String.replace(adjective, @participle_rx, "\\4")
-      word != verb           -> verb
-      word != noan           -> noan
-      true                   -> word
+      stem != adjectival     -> participle
+      stem != verb           -> verb
+      stem != noan           -> noan
+      true                   -> stem
     end
   end
 
